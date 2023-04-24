@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    depends_on:
+      - excalidraw_room
+    restart: on-failure
+    container_name: excalidraw
+    stdin_open: true
+    healthcheck:
+      disable: true
+    # for some reason excalidraw is ignoring the environment REACT_APP_PORTAL_URL
+    env_file: .env
+    ports:
+      - "3050:80"
+    volumes:
+      - ./excalidraw/:/opt/node_app/app:delegated
+      - ./excalidraw/package.json:/opt/node_app/package.json
+      - ./excalidraw/package-lock.json:/opt/node_app/package-lock.json
+      - excalidraw-notused:/opt/node_app/app/node_modules
+
+  excalidraw_room:
+    image: excalidraw/excalidraw-room:latest
+    container_name: excalidraw_room
+    restart: on-failure
+    healthcheck:
+      disable: true
+    ports:
+      - "3051:80"
+
+volumes:
+  excalidraw-notused:
+
+networks:
+  excalidraw-net:
